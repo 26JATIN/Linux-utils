@@ -8,7 +8,7 @@ This repository contains two useful screenshot utilities for Linux:
 
 Simply run:
 ```bash
-git clone https://github.com/26JATIN/Extract-text-using-screenshot-in-linux.git
+git https://github.com/26JATIN/Linux-utils.git
 cd Extract-text-using-screenshot-in-linux
 chmod +x setup.sh
 ./setup.sh
