@@ -33,19 +33,52 @@ install_dependencies() {
     esac
 }
 
+# Function to create keyboard shortcuts using gsettings
+create_shortcuts() {
+    # Get the full path of the scripts
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    TEXT_SCRIPT="$SCRIPT_DIR/Text_Extractor.sh"
+    SEND_SCRIPT="$SCRIPT_DIR/Send_SS_TO_Phone.sh"
+
+    # Make scripts executable
+    chmod +x "$TEXT_SCRIPT" "$SEND_SCRIPT"
+
+    # Get the current custom shortcuts
+    current=$((gsettings get org.gnome.settings-daemon.plugins.media-keys custom-keybindings | grep -o "\[.*\]") 2>/dev/null || echo "[]")
+    
+    # Remove the brackets
+    current=${current#[}
+    current=${current%]}
+    
+    # Add new paths
+    if [ "$current" = "" ]; then
+        new_paths="'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/'"
+    else
+        new_paths="$current, '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/'"
+    fi
+    
+    # Update the custom shortcuts list
+    gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "[$new_paths]"
+    
+    # Set up Text Extractor shortcut (Super+T)
+    gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "Text Extractor"
+    gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "$TEXT_SCRIPT"
+    gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "<Super>t"
+    
+    # Set up Send Screenshot shortcut (Super+S)
+    gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name "Send Screenshot"
+    gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command "$SEND_SCRIPT"
+    gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding "<Super>s"
+}
+
 # Main installation process
 echo "Installing dependencies..."
 install_dependencies
 
-echo "Moving scripts to home directory..."
-cp Text_Extractor.sh Send_SS_TO_Phone.sh "$HOME/"
-chmod +x "$HOME/Text_Extractor.sh" "$HOME/Send_SS_TO_Phone.sh"
-
-echo "Cleaning up..."
-cd ..
-rm -rf "Linux Utils"
+echo "Setting up keyboard shortcuts..."
+create_shortcuts
 
 echo "Installation complete!"
-echo "You can now use:"
-echo "  ~/Text_Extractor.sh - for text extraction"
-echo "  ~/Send_SS_TO_Phone.sh - for sending screenshots to phone"
+echo "Keyboard shortcuts created:"
+echo "  Super+T - Text Extractor"
+echo "  Super+S - Send Screenshot to Phone"

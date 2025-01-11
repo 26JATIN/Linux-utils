@@ -17,18 +17,19 @@ chmod +x setup.sh
 The setup script will:
 - Automatically detect your Linux distribution
 - Install all required dependencies
-- Move the utility scripts to your home directory
-- Clean up the installation files
+- Create keyboard shortcuts automatically:
+  - Super+T for Text Extractor
+  - Super+S for Screenshot to Phone
 
 ## Usage
 
 ### Text Extractor
-1. Run `~/Text_Extractor.sh` or assign it to a shortcut (e.g., Ctrl+T)
+1. Press Super+T (Windows/Command key + T)
 2. Select the area you want to capture text from
 3. The text will be automatically copied to your clipboard
 
 ### Screenshot to Phone
 1. Make sure your phone is connected via Bluetooth
-2. Run `~/Send_SS_TO_Phone.sh`
+2. Press Super+S (Windows/Command key + S)
 3. Select the area you want to capture
 4. The screenshot will be sent to your connected phone
