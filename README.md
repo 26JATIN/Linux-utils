@@ -1,47 +1,34 @@
-# This Shell script allows you to extract text using screenshot in any linux desktop enviornment
+# Linux Screenshot Utilities
 
-## Here are few steps for different distribution to follow before using this script
-### Download script
-```
+This repository contains two useful screenshot utilities for Linux:
+1. Text Extractor - Extract text from screenshots using OCR
+2. Screenshot to Phone - Send screenshots directly to your phone via Bluetooth
+
+## Installation
+
+Simply run:
+```bash
 git clone https://github.com/26JATIN/Extract-text-using-screenshot-in-linux.git
-mv Extract-text-using-screenshot-in-linux/Text_Extractor.sh ~/
+cd Extract-text-using-screenshot-in-linux
+chmod +x setup.sh
+./setup.sh
 ```
 
-### For Fedora based distribution
+The setup script will:
+- Automatically detect your Linux distribution
+- Install all required dependencies
+- Move the utility scripts to your home directory
+- Clean up the installation files
 
-```
-sudo dnf install gnome-screenshot
-sudo dnf install xclip
-sudo dnf install tesseract-ocr
-sudo dnf install tesseract-ocr-eng
-```
+## Usage
 
+### Text Extractor
+1. Run `~/Text_Extractor.sh` or assign it to a shortcut (e.g., Ctrl+T)
+2. Select the area you want to capture text from
+3. The text will be automatically copied to your clipboard
 
-### For Ubuntu based distribution
-
-```
-sudo add-apt-repository ppa:alex-p/tesseract-ocr5
-sudo apt-get update
-sudo apt-get install tesseract-ocr
-sudo apt-get install tesseract-ocr-eng
-sudo apt-get install gnome-screenshot
-sudo apt-get install xclip
-```
-
-### For Arch based distribution
-```
-sudo pacman -S gnome-screenshot
-sudo pacman -S xclip
-sudo pacman -S tesseract-ocr
-sudo pacman -s tesseract-ocr-eng
-```
-
-
-# important note!
-### How to run this bash script?
-
-1.open terminal and type ./Text_Extractor.sh 
-
-2.Select area you want to capture text from. 
-
-3.Now assign a shortcut key ctrl+t and assign command ./Text_Extractor.sh , so that everytime when you press ctrl+t this script executes.
+### Screenshot to Phone
+1. Make sure your phone is connected via Bluetooth
+2. Run `~/Send_SS_TO_Phone.sh`
+3. Select the area you want to capture
+4. The screenshot will be sent to your connected phone
