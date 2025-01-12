@@ -14,20 +14,36 @@ get_distro() {
 install_dependencies() {
     local distro=$(get_distro)
     
+    echo "Installing dependencies for $distro..."
+    
     case "$distro" in
         "fedora")
-            sudo dnf install -y gnome-screenshot xclip tesseract-ocr tesseract-ocr-eng \
-                              bluetooth-sendto qrencode feh python3 zenity zip libnotify
+            # First install basic tools
+            sudo dnf install -y epel-release
+            sudo dnf update -y
+            sudo dnf install -y gnome-screenshot xclip tesseract tesseract-langpack-eng \
+                              bluez bluez-tools
+            # Then install DirectShare specific dependencies
+            sudo dnf install -y qrencode feh python3 zenity zip libnotify
             ;;
         "ubuntu"|"debian")
+            # Update package list
+            sudo apt-get update
+            # First install basic tools
+            sudo apt-get install -y software-properties-common
             sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
             sudo apt-get update
             sudo apt-get install -y tesseract-ocr tesseract-ocr-eng gnome-screenshot xclip \
-                                  bluetooth-sendto qrencode feh python3 zenity zip libnotify-bin
+                                  bluetooth bluez bluez-tools
+            # Then install DirectShare specific dependencies
+            sudo apt-get install -y qrencode feh python3 zenity zip libnotify-bin
             ;;
         "arch")
+            # Update package list
+            sudo pacman -Sy
+            # Install all dependencies
             sudo pacman -S --noconfirm gnome-screenshot xclip tesseract tesseract-data-eng \
-                                      bluez-utils qrencode feh python zenity zip libnotify
+                                      bluez bluez-utils qrencode feh python zenity zip libnotify
             ;;
         *)
             echo "Unsupported distribution. Please install dependencies manually."
@@ -35,21 +51,46 @@ install_dependencies() {
             ;;
     esac
 
-    # Verify all critical commands are available
-    local required_commands=("gnome-screenshot" "xclip" "tesseract" "qrencode" "feh" "python3" "zip" "notify-send")
-    local missing_commands=()
+    # Verify installation
+    echo "Verifying installations..."
+    local required_commands=(
+        "gnome-screenshot:gnome-screenshot"
+        "xclip:xclip"
+        "tesseract:tesseract-ocr"
+        "qrencode:qrencode"
+        "feh:feh"
+        "python3:python3"
+        "zip:zip"
+        "notify-send:libnotify-bin"
+    )
 
-    for cmd in "${required_commands[@]}"; do
+    local missing_packages=()
+    for cmd_pair in "${required_commands[@]}"; do
+        IFS=':' read -r cmd pkg <<< "$cmd_pair"
         if ! command -v "$cmd" >/dev/null 2>&1; then
-            missing_commands+=("$cmd")
+            missing_packages+=("$pkg")
         fi
     done
 
-    if [ ${#missing_commands[@]} -ne 0 ]; then
-        echo "Error: Some required commands are still missing:"
-        printf '%s\n' "${missing_commands[@]}"
+    if [ ${#missing_packages[@]} -ne 0 ]; then
+        echo "Error: Some required packages are still missing:"
+        printf '%s\n' "${missing_packages[@]}"
+        echo "Please try installing them manually:"
+        case "$distro" in
+            "fedora")
+                echo "sudo dnf install ${missing_packages[*]}"
+                ;;
+            "ubuntu"|"debian")
+                echo "sudo apt-get install ${missing_packages[*]}"
+                ;;
+            "arch")
+                echo "sudo pacman -S ${missing_packages[*]}"
+                ;;
+        esac
         exit 1
     fi
+
+    echo "All dependencies installed successfully!"
 }
 
 # Function to create keyboard shortcuts using gsettings
