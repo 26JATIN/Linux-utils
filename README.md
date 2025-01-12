@@ -37,14 +37,11 @@ The setup script will:
 4. The screenshot will be sent to your connected phone
 
 ### DirectShare
-1. Method 1: Direct Selection
-   - Select a file in your file manager
-   - Copy it (Ctrl+C)
-   - Press Super+D to share
-2. Method 2: File Picker
-   - Press Super+D
-   - Select the file you want to share when prompted
+1. Select a file in your file manager
+2. Press Super+D to share
 3. A QR code will appear on your screen
 4. Scan the QR code with any device on the same network
 5. The file will be downloaded automatically
 6. Press any key to stop sharing
+
+Note: Make sure to select the file you want to share before pressing Super+D

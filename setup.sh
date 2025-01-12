@@ -16,21 +16,40 @@ install_dependencies() {
     
     case "$distro" in
         "fedora")
-            sudo dnf install -y gnome-screenshot xclip tesseract-ocr tesseract-ocr-eng bluetooth-sendto qrencode feh python3 zenity
+            sudo dnf install -y gnome-screenshot xclip tesseract-ocr tesseract-ocr-eng \
+                              bluetooth-sendto qrencode feh python3 zenity zip libnotify
             ;;
         "ubuntu"|"debian")
             sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
             sudo apt-get update
-            sudo apt-get install -y tesseract-ocr tesseract-ocr-eng gnome-screenshot xclip bluetooth-sendto qrencode feh python3 zenity
+            sudo apt-get install -y tesseract-ocr tesseract-ocr-eng gnome-screenshot xclip \
+                                  bluetooth-sendto qrencode feh python3 zenity zip libnotify-bin
             ;;
         "arch")
-            sudo pacman -S --noconfirm gnome-screenshot xclip tesseract-ocr tesseract-data-eng bluez-utils qrencode feh python zenity
+            sudo pacman -S --noconfirm gnome-screenshot xclip tesseract tesseract-data-eng \
+                                      bluez-utils qrencode feh python zenity zip libnotify
             ;;
         *)
             echo "Unsupported distribution. Please install dependencies manually."
             exit 1
             ;;
     esac
+
+    # Verify all critical commands are available
+    local required_commands=("gnome-screenshot" "xclip" "tesseract" "qrencode" "feh" "python3" "zip" "notify-send")
+    local missing_commands=()
+
+    for cmd in "${required_commands[@]}"; do
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            missing_commands+=("$cmd")
+        fi
+    done
+
+    if [ ${#missing_commands[@]} -ne 0 ]; then
+        echo "Error: Some required commands are still missing:"
+        printf '%s\n' "${missing_commands[@]}"
+        exit 1
+    fi
 }
 
 # Function to create keyboard shortcuts using gsettings
